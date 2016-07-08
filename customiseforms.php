@@ -3,7 +3,7 @@
 require_once 'customiseforms.civix.php';
 
 /**
- * Hook to customise forms
+ * Australian Greens customisations of Civi Core forms.
  *
  */
 function customiseforms_civicrm_buildForm($formName, &$form) {
@@ -24,6 +24,16 @@ function customiseforms_civicrm_buildForm($formName, &$form) {
         $exportOption->setText(ts('Export PRIMARY fields - sorry this option has been disabled due to performance issues.  Please choose the data you wish to export instead.'));
       }
     }
+  }
+}
+
+/**
+ * Australian Greens customisations of Civi Core templates
+ */
+function customiseforms_civicrm_alterContent( &$content, $context, $tplName, &$object ) {
+// Atrium 3932: Remove in-line editing to improve performance of the Manage Tags and Manage Price Sets pages
+  if($tplName == "CRM/Admin/Page/Tag.tpl" || $tplName == "CRM/Price/Page/Set.tpl") {
+    $content = str_replace(" crm-editable","",$content);
   }
 }
 

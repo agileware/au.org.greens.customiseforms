@@ -32,7 +32,7 @@ function customiseforms_civicrm_buildForm($formName, &$form) {
  */
 function customiseforms_civicrm_alterContent( &$content, $context, $tplName, &$object ) {
 // Atrium 3932: Remove in-line editing to improve performance of the Manage Tags and Manage Price Sets pages
-  if($tplName == "CRM/Admin/Page/Tag.tpl" || $tplName == "CRM/Price/Page/Set.tpl") {
+  if($tplName == "CRM/Tag/Page/Tag.tpl" || $tplName == "CRM/Price/Page/Set.tpl") {
     $content = str_replace(" crm-editable","",$content);
   }
 }

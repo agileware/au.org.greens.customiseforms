@@ -31,7 +31,7 @@ function customiseforms_civicrm_buildForm($formName, &$form) {
  * Australian Greens customisations of Civi Core templates
  */
 function customiseforms_civicrm_alterContent( &$content, $context, $tplName, &$object ) {
-// Atrium 3932: Remove in-line editing to improve performance of the Manage Tags and Manage Price Sets pages
+// Atrium 3932: Remove in-line editing to improve performance of the Manage Tags, Manage Price Sets and Schedule Reminders pages
   if($tplName == "CRM/Tag/Page/Tag.tpl" || $tplName == "CRM/Price/Page/Set.tpl" || $tplName == "CRM/Admin/Page/ScheduleReminders.tpl") {
     $content = str_replace(" crm-editable","",$content);
   }

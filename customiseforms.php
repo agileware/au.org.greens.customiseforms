@@ -7,14 +7,14 @@ require_once 'customiseforms.civix.php';
  *
  */
 function customiseforms_civicrm_buildForm($formName, &$form) {
-// Atrium 2898: By default, do not have a confirmation page on a contribution page - this interferes with the Multipage form
+  // Atrium 2898: By default, do not have a confirmation page on a contribution page - this interferes with the Multipage form.
   if ($formName == "CRM_Contribute_Form_ContributionPage_Settings") {
     if ($form->getAction() == CRM_Core_Action::ADD) {
       $form->setDefaults(array('is_confirm_enabled' => FALSE));
     }
   }
 
-// Disable Primary Field Exports due to performance problems
+  // Disable Primary Field Exports due to performance problems.
   if ($formName == "CRM_Export_Form_Select") {
     $form->setDefaults(array('exportOption' => CRM_Export_Form_Select::EXPORT_SELECTED));
     $exportOptionElements = $form->getElement('exportOption')->getElements();
@@ -25,10 +25,15 @@ function customiseforms_civicrm_buildForm($formName, &$form) {
       }
     }
   }
+  // Atrium 4566 Set the Add new box for Memberships to be checked by default.
+  if ($formName == "CRM_Contact_Form_Merge") {
+    $defaults['operation[move_rel_table_memberships][add]'] = 1;
+    $form->setDefaults($defaults);
+  }
 }
 
 /**
- * Australian Greens customisations of Civi Core templates
+ * Australian Greens customisations of Civi Core templates.
  */
 function customiseforms_civicrm_alterContent( &$content, $context, $tplName, &$object ) {
 // Atrium 3932: Remove in-line editing to improve performance of the Manage Tags, Manage Price Sets and Schedule Reminders pages

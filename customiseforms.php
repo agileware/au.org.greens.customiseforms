@@ -30,6 +30,15 @@ function customiseforms_civicrm_buildForm($formName, &$form) {
     $defaults['operation[move_rel_table_memberships][add]'] = 1;
     $form->setDefaults($defaults);
   }
+
+  // Change the submit button text on the Main and Confirm form steps for greens NSW Membership forms to be more accurate and about membership
+  customiseforms_change_nsw_membership_button_text($formName, $form);
+}
+
+/**
+ * Change the submit button text on the Main and Confirm form steps for greens NSW Membership forms to be more accurate and about membership
+ */
+function customiseforms_change_nsw_membership_button_text($formName, &$form) {
   $membership_join_forms = array(79);
   $membership_renew_forms = array(85);
   $type = '';

@@ -32,7 +32,9 @@ function customiseforms_civicrm_buildForm($formName, &$form) {
   }
 
   // Change the submit button text on the Main and Confirm form steps for greens NSW Membership forms to be more accurate and about membership
-  customiseforms_change_nsw_membership_button_text($formName, $form);
+  if ($formName == 'CRM_Contribute_Form_Contribution_Confirm' || $formName == 'CRM_Contribute_Form_Contribution_Main') {
+    customiseforms_change_nsw_membership_button_text($formName, $form);
+  }
 }
 
 /**
@@ -48,25 +50,23 @@ function customiseforms_change_nsw_membership_button_text($formName, &$form) {
     'CRM_Contribute_Form_Contribution_Confirm' => '_qf_Confirm_next',
     'CRM_Contribute_Form_Contribution_Main' => '_qf_Main_upload',
   );
-  if (in_array($formName, $contribution_form_classes)) {
-    $buttons = $form->getElement('buttons')->getElements();
-    foreach ($buttons as $button) {
-      if ($button->_attributes['name'] == $button_names[$formName]) {
-        if (in_array($form->_id, $membership_renew_forms)) {
-          $type = 'Renewal';
-        }
-        elseif (in_array($form->_id, $membership_join_forms)) {
-          $type = 'Application';
-        }
-        if (substr($formName, -4) == 'Main' && !empty($type)) {
-          $value = 'Confirm Membership ' . $type;
-        }
-        elseif (!empty($type)) {
-          $value = 'Submit Membership ' . $type;
-        }
-        if (!empty($value)) {
-          $button->setValue($value);
-        }
+  $buttons = $form->getElement('buttons')->getElements();
+  foreach ($buttons as $button) {
+    if ($button->_attributes['name'] == $button_names[$formName]) {
+      if (in_array($form->_id, $membership_renew_forms)) {
+        $type = 'Renewal';
+      }
+      elseif (in_array($form->_id, $membership_join_forms)) {
+        $type = 'Application';
+      }
+      if (substr($formName, -4) == 'Main' && !empty($type)) {
+        $value = 'Confirm Membership ' . $type;
+      }
+      elseif (!empty($type)) {
+        $value = 'Submit Membership ' . $type;
+      }
+      if (!empty($value)) {
+        $button->setValue($value);
       }
     }
   }

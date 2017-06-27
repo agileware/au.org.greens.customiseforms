@@ -30,15 +30,55 @@ function customiseforms_civicrm_buildForm($formName, &$form) {
     $defaults['operation[move_rel_table_memberships][add]'] = 1;
     $form->setDefaults($defaults);
   }
+
+  // Change the submit button text on the Main and Confirm form steps for greens NSW Membership forms to be more accurate and about membership
+  if ($formName == 'CRM_Contribute_Form_Contribution_Confirm' || $formName == 'CRM_Contribute_Form_Contribution_Main') {
+    customiseforms_change_nsw_membership_button_text($formName, $form);
+  }
+}
+
+/**
+ * Change the submit button text on the Main and Confirm form steps for greens NSW Membership forms to be more accurate and about membership
+ */
+function customiseforms_change_nsw_membership_button_text($formName, &$form) {
+  $membership_join_forms = array(79);
+  $membership_renew_forms = array(85);
+  $type = '';
+  $value = '';
+  $contribution_form_classes = array("CRM_Contribute_Form_Contribution_Confirm", "CRM_Contribute_Form_Contribution_Main");
+  $button_names = array(
+    'CRM_Contribute_Form_Contribution_Confirm' => '_qf_Confirm_next',
+    'CRM_Contribute_Form_Contribution_Main' => '_qf_Main_upload',
+  );
+  $buttons = $form->getElement('buttons')->getElements();
+  foreach ($buttons as $button) {
+    if ($button->_attributes['name'] == $button_names[$formName]) {
+      if (in_array($form->_id, $membership_renew_forms)) {
+        $type = 'Renewal';
+      }
+      elseif (in_array($form->_id, $membership_join_forms)) {
+        $type = 'Application';
+      }
+      if (substr($formName, -4) == 'Main' && !empty($type)) {
+        $value = 'Confirm Membership ' . $type;
+      }
+      elseif (!empty($type)) {
+        $value = 'Submit Membership ' . $type;
+      }
+      if (!empty($value)) {
+        $button->setValue($value);
+      }
+    }
+  }
 }
 
 /**
  * Australian Greens customisations of Civi Core templates.
  */
-function customiseforms_civicrm_alterContent( &$content, $context, $tplName, &$object ) {
-// Atrium 3932: Remove in-line editing to improve performance of the Manage Tags, Manage Price Sets and Schedule Reminders pages
-  if($tplName == "CRM/Tag/Page/Tag.tpl" || $tplName == "CRM/Price/Page/Set.tpl" || $tplName == "CRM/Admin/Page/ScheduleReminders.tpl") {
-    $content = str_replace(" crm-editable","",$content);
+function customiseforms_civicrm_alterContent(&$content, $context, $tplName, &$object) {
+  // Atrium 3932: Remove in-line editing to improve performance of the Manage Tags, Manage Price Sets and Schedule Reminders pages
+  if ($tplName == "CRM/Tag/Page/Tag.tpl" || $tplName == "CRM/Price/Page/Set.tpl" || $tplName == "CRM/Admin/Page/ScheduleReminders.tpl") {
+    $content = str_replace(" crm-editable", "", $content);
   }
 }
 
@@ -53,8 +93,6 @@ function customiseforms_civicrm_config(&$config) {
 
 /**
  * Implements hook_civicrm_xmlMenu().
- *
- * @param array $files
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_xmlMenu
  */
@@ -101,13 +139,6 @@ function customiseforms_civicrm_disable() {
 /**
  * Implements hook_civicrm_upgrade().
  *
- * @param $op string, the type of operation being performed; 'check' or 'enqueue'
- * @param $queue CRM_Queue_Queue, (for 'enqueue') the modifiable list of pending up upgrade tasks
- *
- * @return mixed
- *   Based on op. for 'check', returns array(boolean) (TRUE if upgrades are pending)
- *                for 'enqueue', returns void
- *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_upgrade
  */
 function customiseforms_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
@@ -131,8 +162,6 @@ function customiseforms_civicrm_managed(&$entities) {
  *
  * Generate a list of case-types.
  *
- * @param array $caseTypes
- *
  * Note: This hook only runs in CiviCRM 4.4+.
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_caseTypes
@@ -152,7 +181,7 @@ function customiseforms_civicrm_caseTypes(&$caseTypes) {
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_caseTypes
  */
 function customiseforms_civicrm_angularModules(&$angularModules) {
-_customiseforms_civix_civicrm_angularModules($angularModules);
+  _customiseforms_civix_civicrm_angularModules($angularModules);
 }
 
 /**
@@ -163,33 +192,3 @@ _customiseforms_civix_civicrm_angularModules($angularModules);
 function customiseforms_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
   _customiseforms_civix_civicrm_alterSettingsFolders($metaDataFolders);
 }
-
-/**
- * Functions below this ship commented out. Uncomment as required.
- *
-
-/**
- * Implements hook_civicrm_preProcess().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_preProcess
- *
-function customiseforms_civicrm_preProcess($formName, &$form) {
-
-} // */
-
-/**
- * Implements hook_civicrm_navigationMenu().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_navigationMenu
- *
-function customiseforms_civicrm_navigationMenu(&$menu) {
-  _customiseforms_civix_insert_navigation_menu($menu, NULL, array(
-    'label' => ts('The Page', array('domain' => 'au.org.greens.customiseforms')),
-    'name' => 'the_page',
-    'url' => 'civicrm/the-page',
-    'permission' => 'access CiviReport,access CiviContribute',
-    'operator' => 'OR',
-    'separator' => 0,
-  ));
-  _customiseforms_civix_navigationMenu($menu);
-} // */
